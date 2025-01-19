@@ -20,7 +20,7 @@ public class CombatController : MonoBehaviour
     [NonSerialized]
     public int damage;
     [NonSerialized]
-    public int defaultDamage = 2;
+    public int defaultDamage = 1;
     [NonSerialized]
     public float defaultRange = 1.5f;
 
@@ -79,7 +79,12 @@ public class CombatController : MonoBehaviour
                     {
                         enemy.GetComponent<EnemyController>().TakeDamage(damage);
                     }
+                    else
+                    {
+                        Debug.LogWarning("Enemy was null during attack execution.");
+                    }
                 }, 1f));
+
             }
         }
 

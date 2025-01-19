@@ -20,11 +20,14 @@ public class EnemyController : MonoBehaviour
     [SerializeField]
     private Slider healthBar;
 
+    [SerializeField]
+    private float moveSpeed = 3f; // Added speed factor
+
     void Start()
     {
         enemyAnimator = GetComponent<Animator>();
 
-        //small values for eisier testing
+        //small values for easier testing
         enemyStats.health = 50;
         damage = 10;
 
@@ -44,8 +47,17 @@ public class EnemyController : MonoBehaviour
 
             if (Vector3.Distance(transform.position, player.transform.position) > range)
             {
+                // Face the player
                 transform.LookAt(new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z));
-                transform.position = Vector3.Lerp(transform.position, new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z), 0.003f);
+
+                // Move towards the player with speed factor
+                transform.position = Vector3.MoveTowards(
+                    transform.position,
+                    new Vector3(player.transform.position.x, transform.position.y, player.transform.position.z),
+                    moveSpeed * Time.deltaTime
+                );
+
+                enemyAnimator.SetBool("isWalking", true); // Trigger walking animation
             }
             else if (!isAttacking)
             {
@@ -55,6 +67,7 @@ public class EnemyController : MonoBehaviour
         else
         {
             healthBar.gameObject.SetActive(false);
+            enemyAnimator.SetBool("isWalking", false); // Stop walking animation
         }
     }
 
@@ -73,6 +86,7 @@ public class EnemyController : MonoBehaviour
         StartCoroutine(Utility.TimedEvent(() =>
         {
             isAttacking = false;
+            enemyAnimator.SetBool("isAttacking", false);
         }, 2.5f));
     }
 
